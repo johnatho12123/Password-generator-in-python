@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lightblue;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        select, input {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        #password {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to the Password Generator!</h1>
+    <label for="strength">Choose password strength:</label>
+    <select id="strength">
+        <option value="very strong">Very Strong</option>
+        <option value="strong">Strong</option>
+        <option value="medium">Medium</option>
+        <option value="weak">Weak</option>
+        <option value="very weak">Very Weak</option>
+    </select>
+
+    <button onclick="generatePassword()">Generate Password</button>
+    <div id="password"></div>
+</div>
+
+<script>
+    const letters = "abcdefghijklmnopqrstuvwxyz".split('');
+    const numbers = "0123456789".split('');
+    const special = ["@", "#", "$", "%", "&", "*", "?", "/", "+", "§"];
+
+    function getRandomItems(array, count) {
+        let result = [];
+        let _array = [...array];
+        for (let i = 0; i < count; i++) {
+            if (_array.length === 0) break;
+            const randomIndex = Math.floor(Math.random() * _array.length);
+            result.push(_array.splice(randomIndex, 1)[0]);
+        }
+        return result;
+    }
+
+    function pswrd_letters(num1) {
+        const rand_letters = getRandomItems(letters, num1).join('');
+        const rand_letters_upper = getRandomItems(letters, 3).map(l => l.toUpperCase()).join('');
+        return rand_letters + rand_letters_upper;
+    }
+
+    function pswrd_numbers(num2) {
+        return getRandomItems(numbers, num2).join('');
+    }
+
+    function spcl_pswrd(num3) {
+        return getRandomItems(special, num3).join('');
+    }
+
+    function generatePassword() {
+        const strength = document.getElementById("strength").value;
+        let character_num = [];
+
+        if (strength === "very strong") character_num = [8,9];
+        else if (strength === "strong") character_num = [6,7];
+        else if (strength === "medium") character_num = [4,5];
+        else if (strength === "weak") character_num = [2,3];
+        else if (strength === "very weak") character_num = [0,1];
+        else {
+            document.getElementById("password").innerText = "Invalid choice. Please select again.";
+            return;
+        }
+
+        const num1 = character_num[Math.floor(Math.random() * character_num.length)];
+        const num2 = character_num[Math.floor(Math.random() * character_num.length)];
+        const num3 = character_num[Math.floor(Math.random() * character_num.length)];
+
+        const ltr = pswrd_letters(num1);
+        const numbb = pswrd_numbers(num2);
+        const spcll = spcl_pswrd(num3);
+
+        let combined = (ltr + numbb + spcll).split('');
+        // shuffle the password
+        for (let i = combined.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [combined[i], combined[j]] = [combined[j], combined[i]];
+        }
+
+        const tg_pswrd = combined.join('');
+        
+        document.getElementById("password").innerText = "Generating password...";
+        setTimeout(() => {
+            document.getElementById("password").innerText = `Your password is: ${tg_pswrd}\n\nDo not share it with anyone!`;
+        }, 2000);
+        
+    }
+</script>
+
+</body>
+</html>
